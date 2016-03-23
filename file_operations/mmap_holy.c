@@ -8,7 +8,7 @@
 //mmap() replace read() and write() to operate big files.
 //eg. convert the case.
 
-void holy_mmap(char* dir){
+void mmap_holy(char* dir){
 	int fp;
 	char* p;
 	fp=open(dir,O_RDWR);
@@ -38,6 +38,6 @@ int main(int argc, char* argv[]){
 		printf("no file open!");
 		return -1;
 	}
-	holy_mmap(argv[1]);
+	mmap_holy(argv[1]);
 	return 0;
 }
