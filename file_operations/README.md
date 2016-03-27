@@ -1,4 +1,5 @@
 #Linux文件操作
+
 ###1.文件的创建，打开与关闭
 >函数原型
 ```c
@@ -6,13 +7,16 @@
 FILE *fopen(const char *path,const char *mode);  //文件名  模式
 int fclose(FILE *stream);
 ```
+
 ###2.读写文件
+
 #####2.1数据块读写
 ```c
 #include <stdio.h>
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t fwrite(void *ptr, size_t size, size_t nmemb, FILE *stream);
 ```
+
 #####2.2格式化读写
 ```c
 #include <stdio.h>
@@ -74,11 +78,13 @@ ftell获取文件流当前的读写位置
 rewind将文件当前读写点移动到文件头
 
 ###3.目录操作
+
 #####3.1改变目录或文件的访问权限
 ```c
 #include <sys/stat.h>
 int chmod(const char* path, mode_t mode);      //mode形如：0777
 ```
+
 #####3.2获取、改变当前目录
 ```c
 #include <unistd.h>   //头文件
@@ -95,6 +101,7 @@ int chdir(const char *path);                //相当于cd命令
 int mkdir(const char *pathname, mode_t mode);   //mode是目录权限
 int rmdir(const char *pathname);      
 ```
+
 #####3.4获取目录信息
 ```c
 #include <sys/types.h>
@@ -118,6 +125,7 @@ off_t telldir(DIR *dir);                    //返回目录流当前的读取位�
 ```
 
 ###4.基于文件描述符的操作
+
 #####4.1打开、创建和关闭文件
 ```c
 int open(const char *pathname, int flags);             //文件名  打开方式
@@ -126,6 +134,7 @@ int creat();                                           //不常用，等同于op
 int close(int fd);                                     //fd表示文件描述词,是先前由open或creat创建文件时的返回值
 ```
 >flags的可选项：
+
 |掩码|含义|
 |----------|-----------------|
 |O_RDONLY|只读|
@@ -135,6 +144,7 @@ int close(int fd);                                     //fd表示文件描述词
 |O_EXCL|与O_CREAT连用，如果文件已存在，则open失败|
 |O_TRUNC|如果文件存在，将长度截为0|
 |O_APPEND|追加方式，每次调用write时，文件指针自动先移到文件尾，用于多进程写同一个文件的情况。|
+
 #####4.2读写文件
 >函数原型
 ```c
@@ -209,6 +219,7 @@ dup返回新的文件描述符（没有使用的文件描述符的最小编号�
 标准输入文件描述符         0：STDIN_FILENO  
 标准输出文件描述符         1：STDOUT_FILENO   
 标准错误输出文件描述符  2：STDERR_FILENO 
+
 >对应的流
 
 0：stdin
@@ -224,6 +235,7 @@ stdout和stderr具有可写属性，缺省情况下是指向屏幕输出数据�
 #include <sys/time.h>
 int select(int maxfd, fd_set *readset,fd_set *writeset, fd_set *exceptionset, const struct timeval * timeout);
 ```
+
 ###6.mmap文件映射
 >函数原型
 ```c
