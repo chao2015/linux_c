@@ -30,7 +30,7 @@ int sprintf(char *str, const char *format, ...);
 int sscanf(char *str, const char *format, …); 
 ```
 
-fprintf将格式化后的字符串写入到文件流stream中
+fprintf将格式化后的字符串写入到文件流stream中  
 sprintf将格式化后的字符串写入到字符串str中  
 
 #####2.3单个字符读写
@@ -67,7 +67,7 @@ int fseek(FILE *stream, long offset, int whence);
 long ftell(FILE *stream);  
 void rewind(FILE *stream);    //等同于fseek(fp, 0, SEEK_SET);
 ```
-feof判断是否到达文件末尾的下一个（注意到达文件末尾之后还会做一次）
+feof判断是否到达文件末尾的下一个（注意到达文件末尾之后还会做一次）;  
 fseek设置当前读写点到偏移whence 长度为offset处。
 >whence可选项：  
 SEEK_SET     (0：文件开头)  
@@ -215,6 +215,7 @@ int fstat(int fd, struct stat *buf);
 int dup(int oldfd);    
 int dup2(int oldfd, int newfd);
 ```
+
 dup返回新的文件描述符（没有使用的文件描述符的最小编号），内核的文件打开引用计数+1。
 
 #####4.7标准文件描述符
