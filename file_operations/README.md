@@ -187,8 +187,7 @@ SEEK_END 从文件尾开始计算
 #include <sys/stat.h>
 #include <unistd.h>
 int stat(const char *file_name, struct stat *buf);      //文件名  stat结构体指针
-int fstat(int fd, struct stat *buf); 
-
+int fstat(int fd, struct stat *buf);   
     struct stat {
            dev_t         st_dev;      /*如果是设备，返回设备表述符，否则为0*/
            ino_t         st_ino;      /* i节点号 */
@@ -205,6 +204,7 @@ int fstat(int fd, struct stat *buf);
            time_t        st_ctime;    /* 最后权限修改时间 */
 };
 ```
+
 
 #####4.6文件描述符的复制
 
