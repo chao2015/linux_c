@@ -55,9 +55,9 @@ int fputs(const char *s, FILE *stream);
 char *gets(char *s);                       //等同于 fgets(const char *s, int size, stdin);
 int puts(const char *s);                   //等同于 fputs(const char *s,stdout);
 ```
-fgets读取一行字符时，保留行尾的换行符。
-fputs不会在行尾自动添加换行符。
-puts会在标准输出流中自动添加一换行符。
+fgets读取一行字符时，保留行尾的换行符。  
+fputs不会在行尾自动添加换行符。  
+puts会在标准输出流中自动添加一换行符。  
 
 #####2.5文件定位
 ```c
@@ -69,12 +69,12 @@ void rewind(FILE *stream);    //等同于fseek(fp, 0, SEEK_SET);
 ```
 feof判断是否到达文件末尾的下一个（注意到达文件末尾之后还会做一次）
 fseek设置当前读写点到偏移whence 长度为offset处。
->whence可选项：
-SEEK_SET     (0：文件开头)
-SEEK_CUR    (1：文件当前位置 )
-SEEK_END    (2：文件末尾)
+>whence可选项：  
+SEEK_SET     (0：文件开头)  
+SEEK_CUR    (1：文件当前位置 )  
+SEEK_END    (2：文件末尾)  
 
-ftell获取文件流当前的读写位置
+ftell获取文件流当前的读写位置  
 rewind将文件当前读写点移动到文件头
 
 ###3.目录操作
@@ -130,8 +130,8 @@ off_t telldir(DIR *dir);                    //返回目录流当前的读取位�
 ```c
 int open(const char *pathname, int flags);             //文件名  打开方式
 int open(const char *pathname, int flags, mode_t mode);//文件名  打开方式  权限
-int creat();                                           //不常用，等同于open(pathname,O_CREAT|O_TRUNC|O_WRONLY,mode)
-int close(int fd);                                     //fd表示文件描述词,是先前由open或creat创建文件时的返回值
+int creat();                                   //不常用，等同于open(pathname,O_CREAT|O_TRUNC|O_WRONLY,mode)
+int close(int fd);                             //fd表示文件描述词,是先前由open或creat创建文件时的返回值
 ```
 >flags的可选项：
 
@@ -161,6 +161,7 @@ ssize_t write(int fd, const void *buf, size_t count);
 #include <unistd.h>
 int ftruncate(int fd, off_t length);
 ```
+
 执行成功则返回0，失败返回-1。 
 
 #####4.4文件定位
@@ -170,10 +171,11 @@ int ftruncate(int fd, off_t length);
 #include <unistd.h>
 off_t lseek(int fd, off_t offset, int whence);    
 ```
->whence的可选项
-SEEK_SET 从文件头开始计算
-SEEK_CUR 从当前指针开始计算
-SEEK_END 从文件尾开始计算
+
+>whence的可选项  
+SEEK_SET 从文件头开始计算  
+SEEK_CUR 从当前指针开始计算  
+SEEK_END 从文件尾开始计算  
 
 利用该函数可以实现文件空洞，通常用于多进程间通信的时候的共享内存。
 
@@ -205,7 +207,9 @@ int fstat(int fd, struct stat *buf);
 ```
 
 #####4.6文件描述符的复制
+
 >函数原型
+
 ```c
 #include <unistd.h>  
 int dup(int oldfd);    
@@ -216,24 +220,25 @@ dup返回新的文件描述符（没有使用的文件描述符的最小编号�
 #####4.7标准文件描述符
 >对应的宏
 
-标准输入文件描述符         0：STDIN_FILENO  
-标准输出文件描述符         1：STDOUT_FILENO   
-标准错误输出文件描述符  2：STDERR_FILENO 
+标准输入文件描述符         0：STDIN_FILENO   
+标准输出文件描述符         1：STDOUT_FILENO    
+标准错误输出文件描述符  2：STDERR_FILENO   
 
 >对应的流
 
-0：stdin
-1：stdout
-2：stderr
-stdin具有可读属性，缺省情况下是指从键盘的读取输入；
-stdout和stderr具有可写属性，缺省情况下是指向屏幕输出数据。
+0：stdin  
+1：stdout  
+2：stderr  
+stdin具有可读属性，缺省情况下是指从键盘的读取输入；  
+stdout和stderr具有可写属性，缺省情况下是指向屏幕输出数据。  
 
 ###5.I/O多路转接模型
 >select()函数
 ```c
 #include <sys/select.h>
 #include <sys/time.h>
-int select(int maxfd, fd_set *readset,fd_set *writeset, fd_set *exceptionset, const struct timeval * timeout);
+int select(int maxfd, fd_set *readset,fd_set *writeset, fd_set *exceptionset, 
+	const struct timeval * timeout);
 ```
 
 ###6.mmap文件映射
