@@ -15,7 +15,7 @@ int semop(int semid, struct sembuf *sops, size_t num_sops);
 
 ```c
 int semid=semget((key_t)1234, 1, IPC_CREAT|0600);    //1、创建信号量集合
-int ret semctl(semid ,0, SETVAL, 1);    			 //2、初始化
+int ret=semctl(semid ,0, SETVAL, 1);    			 //2、初始化
 struct sembuf p,v;    								 //3、定义结构体并初始化(略)
 semop(semid, &p, 1);    							 //4、p+1，v-1操作信号量
 semop(semid, &v, 1);
