@@ -15,7 +15,7 @@ void scandir1(char* pathname,int width)
 		{
 		}else{
 			printf("%*s%s\n",width," ",df->d_name);
-			if(df->d_type == 4)				//d_type==4 is dir, details: man 2 stat
+			if(df->d_type == 4)		//d_type==4 is dir, details: man 2 stat
 			{
 				bzero(path,sizeof(path));	
 				sprintf(path,"%s%s%s",pathname,"/",df->d_name);
