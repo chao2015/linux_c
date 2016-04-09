@@ -1,46 +1,32 @@
-#I/O多路转接模型
- 
-> I/O多路转接模型：在这种模型下，如果请求的I/O操作阻塞，且它不是真正阻塞I/O，而是让其中的一个函数等待，在这期间，I/O还能进行其他操作。select()函数，就是属于这种模型。
- 
-> select函数原型与说明
- 
+#mmap文件映射
+
+>函数原型
+
 ```c
-#include <sys/select.h>
-#include <sys/time.h>
-int select(int maxfd, fd_set *readset,fd_set *writeset, fd_set *exceptionset, const struct timeval * timeout);
+<sys/mman.h>
+void* mmap(void* start,size_t length,int prot,int flags,int fd,off_t offset);  
+
+int munmap(void* start,size_t length);
 ```
 
-+ 返回:就绪描述字的正数目，0——超时，-1——出错
- 
-+ 参数解释
- 
-|参数|说明|
-|------|-----------------|
-|maxfd：| 最大的文件描述符（其值应该为最大的文件描述符字 + 1）|
-|readset： |内核读操作的描述符字集合|
-|writeset：|内核写操作的描述符字集合|
-|exceptionset：|内核异常操作的描述符字集合|
-|timeout：|等待描述符就绪需要多少时间。NULL代表永远等下去，一个固定值代表等待固定时间，0代表根本不等待，检查描述字之后立即返回|
- 
- 
-+ 其中readset、writeset、exceptionset都是fd_set集合。该集合的相关操作如下
- 
-```c
-void FD_ZERO(fd_set *fdset);  /* 将所有fd清零 */
-void FD_SET(int fd, fd_set *fdset);  /* 增加一个fd */
-void FD_CLR(int fd, fd_set *fdset);  /* 删除一个fd */
-int FD_ISSET(int fd, fd_set *fdset);  /* 判断一个fd是否有设置 */
-```
- 
-> 一般来说，在使用select函数之前，首先要使用FD_ZERO和FD_SET来初始化文件描述符集，在使用select函数时，可循环使用FD_ISSET测试描述符集，在执行完对相关文件描述符之后，使用FD_CLR来清除描述符集。
- 
-+ 另外，select函数中的timeout是一个struct timeval类型的指针，该结构体如下
- 
-```c
-struct timeval
-{
-long tv_sec; /* second */   //秒
-long tv_usec;  /* microsecond */ //微秒
-};
-```
- 
++ 1.start：映射区的开始地址，设置为0时表示由系统决定映射区的起始地址。
++ 2.length：映射区的长度。//长度单位是 以字节为单位，不足一内存页按一内存页处理
++ 3.prot：期望的内存保护标志，不能与文件的打开模式冲突。是以下的某个值，可以通过or运算合理地组合在一起
+
+> + PROT_EXEC //页内容可以被执行  
+> + PROT_READ //页内容可以被读取  
+> + PROT_WRITE //页可以被写入  
+> + PROT_NONE //页不可访问  
+
++ 4.flags：指定映射对象的类型，映射选项和映射页是否可以共享。它的值可以是一个或者多个以下位的组合体
+
+> + MAP_FIXED //使用指定的映射起始地址，如果由start和len参数指定的内存区重叠于现存的映射空间，重叠部分将会被丢弃。如果指定的起始地址不可用，操作将会失败。并且起始地址必须落在页的边界上。
+> + MAP_SHARED //与其它所有映射这个对象的进程共享映射空间。对共享区的写入，相当于输出到文件。直到msync()或者munmap()被调用，文件实际上不会被更新。
+> + MAP_PRIVATE //建立一个写入时拷贝的私有映射。内存区域的写入不会影响到原文件。这个标志和以上标志是互斥的，只能使用其中一个。
+> + ...
+
++ 5.fd：有效的文件描述词。一般是由open()函数返回，其值也可以设置为-1，此时需要指定flags参数中的MAP_ANON,表明进行的是匿名映射。
++ 6.off_toffset：被映射对象内容的起点。
+  
++ mmap()成功执行时，返回被映射区的指针；失败时，返回MAP_FAILED[其值为(void *)-1]。
++ munmap()成功执行时，返回0；失败时，返回-1。
