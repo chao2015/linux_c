@@ -174,7 +174,9 @@ int main(){
     }
     return 0;
 }
-//这里if和else里面的语句都得到执行了，和我们以前的if…else结构不同，此时相当于有两份main函数代码的拷贝，其中一份做的操作是if(iRet == 0)的情况；另外一份做的操作是else(父)的情况。所以可以输出2句话。**提问：如何创建兄弟进程和爷孙进程？**
+/*这里if和else里面的语句都得到执行了，和我们以前的if…else结构不同，此时
+相当于有两份main函数代码的拷贝，其中一份做的操作是if(iRet == 0)的情况；
+另外一份做的操作是else(父)的情况。所以可以输出2句话。*/
 ```
  
 ###2.3.exec函数族
@@ -393,7 +395,8 @@ int main(){
  
 void SignChildPsExit(int iSignNo){
     int iExitCode;
-    pid_t pid = waitpid(-1, NULL, 0); //表示等待任何进程，并阻塞，如果换成waitpid(-1, NULL, WNOHANG);则跟没有写waitpid效果类似，此时父进程没有阻塞
+    pid_t pid = waitpid(-1, NULL, 0); /*表示等待任何进程，并阻塞;
+	如果换成waitpid(-1, NULL, WNOHANG),则跟没有写waitpid效果类似，此时父进程没有阻塞*/
     printf("SignNo:%d, child %d exit\n", iSignNo, pid);
     if(WIFEXITED(iExitCode)){
         printf("Child exited with code %d\n", WEXITSTATUS(iExitCode));
@@ -462,3 +465,5 @@ int main(){
     return 0;
 }
 ```
+
+###4.2.守护进程
