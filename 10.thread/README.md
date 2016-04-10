@@ -34,7 +34,7 @@ char* p; pthread_join(pthid,(void**)&p);
 pthread_cancel(pthid);
 ```
 
-其他操作1：线程终止清理函数（退出回调函数）
++ 其他操作：线程终止清理函数（退出回调函数）
 
 ```c
 void pthread_cleanup_push(void (*routine) (void *), void *arg) 
@@ -47,31 +47,6 @@ void pthread_cleanup_pop(int execute)
 void cleanfunc()
 pthread_cleanup_push(cleanfunc, (void*)1);
 pthread_cleanup_pop(1);
-```
-
-其他操作2：互斥锁
-
-```c
-#include <pthread.h>
-int pthread_mutex_init(pthread_mutex_t *mutex,  const pthread_mutexattr_t *mutexattr)
-int pthread_mutex_destroy(pthread_mutex_t *mutex);
-```
-
->常规使用方式
-
-```c
-pthread_mutex_t mutex;
-int ret=pthread_mutex_init(&mutex,NULL);    //1、创建快速锁
-pthread_mutex_lock(&mutex)    //2、加锁
-pthread_mutex_unlock(&mutex)    //3、解锁
-```
-
->锁操作
-
-```c
-int pthread_mutex_lock(pthread_mutex_t *mutex)    //加锁
-int pthread_mutex_unlock(pthread_mutex_t *mutex)    //解锁
-int pthread_mutex_trylock(pthread_mutex_t *mutex)    //测试加锁
 ```
 
 ###1.函数pthread_create：用来创建线程。
@@ -101,4 +76,89 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)    //测试加锁
 
 ###5.线程终止清理函数pthread_cleanup_push()/pthread_cleanup_pop()
 
-###6.互斥（互斥锁）与同步
+EXAMPLE 1:    pthread_cleanup.c
+
+```c
+
+#include <pthread.h>                                                                     
+#include <stdio.h>
+
+void cleanfunc(void* p){ 
+    printf("cleanfunc = %d\n",(int)p);
+}
+
+void* pfunc(void* p){ 
+    pthread_cleanup_push(cleanfunc,(void*)1);   
+    pthread_cleanup_push(cleanfunc,(void*)2);   
+    printf("thread create success\n");
+    sleep(1);
+    pthread_cleanup_pop(1);
+    pthread_cleanup_pop(1);
+    pthread_exit(NULL);
+}
+
+int main(){
+    pthread_t pth_id;
+    int ret;
+    ret = pthread_create(&pth_id,NULL,pfunc,NULL);
+    if(ret != 0){ 
+        printf("pthread_cread failed!\n");
+        return -1; 
+    }   
+    printf("i am main thread!\n");
+    sleep(2);
+    ret = pthread_cancel(pth_id);	//使用场景：用到pthread_cancel()
+    if(ret!=0){
+        printf("pthread_cancle failed,ret = %d\n",ret);
+        return -1; 
+    }   
+    return 0;
+}
+```
+
+EXAMPLE 2:    pthread_cleanup_malloc.c
+
+```c
+
+#include <pthread.h>                                                                     
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+void cleanfunc(void* p){ 
+    free(p);
+    printf("cleanfunc free\n");
+}
+
+void* pfunc(void* p){ 
+    p = malloc(10);
+    pthread_cleanup_push(cleanfunc,p);  
+    printf("thread create success\n");
+    sleep(10);
+    pthread_exit(NULL);
+    pthread_cleanup_pop(1);
+}
+
+int main(){
+    pthread_t pth_id;
+    int ret;
+    ret = pthread_create(&pth_id,NULL,pfunc,NULL);
+    if(ret != 0){ 
+        printf("pthread_cread failed!\n");
+        return -1; 
+    }   
+    printf("i am main thread!\n");
+    sleep(3);
+    ret = pthread_cancel(pth_id);
+    if(ret!=0){
+        printf("pthread_cancle failed,ret = %d\n",ret);
+        return -1; 
+    }   
+    ret = pthread_join(pth_id,NULL);
+    if(ret != 0){ 
+        printf("pthread_join failed!\n");
+        return -1; 
+    }   
+    return 0;
+}
+```
